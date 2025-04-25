@@ -11,20 +11,8 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET; // In production, use environment variable
 
-// Enable CORS in development and production with restrictions
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, 'build')));
-  
-  // Serve the React index.html for any non-API request
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'build', 'index.html'));
-  });
-}
-else{
-  // Allow all origin
-  app.use(cors());
-}
-
+// Enable CORS and JSON parsing
+app.use(cors());
 app.use(express.json());
 
 // Database setup
@@ -217,15 +205,11 @@ app.delete('/todos/:id', authenticateToken, async (req, res) => {
   }
 });
 
-// Start the server
-initializeDatabase()
-  .then(() => {
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
-  })
-  .catch(err => {
-    console.error('Database initialization failed:', err);
-  });
+// Initialize database once
+const readyPromise = initializeDatabase();
 
-module.exports = app;
+// Export a Vercel-compatible handler
+module.exports = async (req, res) => {
+  await readyPromise;
+  app(req, res);
+};
