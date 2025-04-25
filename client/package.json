@@ -5,15 +5,15 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "vite:build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "build:client": "cd client && npm install && npm run build", 
     "install:server": "npm install", 
     "start": "node server.js", 
-    "vercerLbuild": "npm run install:server && npm run build:client", 
+    "vercel:build": "npm run install:server && npm run build:client", 
+    "build": "vite build",
     "local:dev": "npm run dev --prefix client & nodemon server.js" 
-  
   },
   "dependencies": {
     "react": "^19.0.0",
